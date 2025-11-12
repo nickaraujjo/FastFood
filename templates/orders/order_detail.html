@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Pedido #{{ order.id }}</h2>
+
+    <!-- Detalhes do Pedido -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            Detalhes do Pedido
+        </div>
+        <div class="card-body">
+            <p><strong>Cliente:</strong> {{ order.customer_name }}</p>
+            <p><strong>Endereço de entrega:</strong> {{ order.delivery_address }}</p>
+            <p><strong>Total:</strong> R$ {{ order.total_price }}</p>
+            <p>
+                <strong>Status:</strong>
+                {% if order.status == 'PENDING' %}
+                    <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
+                {% elif order.status == 'DELIVERED' %}
+                    <span class="badge bg-success">{{ order.get_status_display }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                {% endif %}
+            </p>
+            <p><strong>Criado em:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+        </div>
+    </div>
+
+    <!-- Dados do Entregador -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            Entregador
+        </div>
+        <div class="card-body">
+            {% if order.delivery %}
+                {% if order.delivery.delivery_person %}
+                    <p><strong>Nome:</strong> {{ order.delivery.delivery_person.name }}</p>
+                    <p><strong>Telefone:</strong> {{ order.delivery.delivery_person.phone }}</p>
+                    <p><strong>Veículo:</strong> {{ order.delivery.delivery_person.vehicle }}</p>
+                    <p><strong>Status:</strong> {{ order.delivery.delivery_person.get_status_display }}</p>
+                {% else %}
+                    <p>Nenhum entregador atribuído.</p>
+                {% endif %}
+            {% else %}
+                <p class="text-warning">Entrega ainda não criada para este pedido.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Botões de ação -->
+    <div class="d-flex gap-2">
+        <a href="{% url 'orders:update_status' order.id %}" class="btn btn-success">Atualizar Status</a>
+
+        {% if order.delivery and not order.delivery.delivery_person %}
+            <a href="{% url 'delivery:assign' order.delivery.id %}" class="btn btn-primary">Atribuir Entregador</a>
+        {% endif %}
+
+        <a href="{% url 'orders:list' %}" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>
+{% endblock %}

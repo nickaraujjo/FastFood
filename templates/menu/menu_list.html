@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Cardápio - Sistema de Fast Food{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="bi bi-book"></i> Cardápio</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="btn-group" role="group">
+            <a href="{% url 'menu:list' %}" class="btn btn-outline-primary {% if not selected_category %}active{% endif %}">
+                Todos
+            </a>
+            {% for code, name in categories %}
+                <a href="?category={{ code }}" class="btn btn-outline-primary {% if selected_category == code %}active{% endif %}">
+                    {{ name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for item in items %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="bi bi-image fs-1 text-white"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text">{{ item.description|truncatewords:15 }}</p>
+                    <p class="card-text">
+                        <strong class="text-primary fs-4">R$ {{ item.price }}</strong>
+                    </p>
+                    <span class="badge bg-info">{{ item.get_category_display }}</span>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'menu:detail' item.pk %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye"></i> Ver Detalhes
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Nenhum item encontrado no cardápio.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

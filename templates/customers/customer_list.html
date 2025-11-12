@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Clientes - Sistema de Fast Food{% endblock %}
+{% load static %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1><i class="bi bi-people"></i> Clientes</h1>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{% url 'customers:create' %}" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Novo Cliente
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>E-mail</th>
+                                <th>Pontos de Fidelidade</th>
+                                <th>Cadastro</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for customer in customers %}
+                                <tr>
+                                    <td>{{ customer.name }}</td>
+                                    <td>{{ customer.phone }}</td>
+                                    <td>{{ customer.email|default:"-" }}</td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-star-fill"></i> {{ customer.loyalty_points }}
+                                        </span>
+                                    </td>
+                                    <td>{{ customer.created_at|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'customers:detail' customer.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">Nenhum cliente cadastrado.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Pedidos - Sistema de Fast Food{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Lista de Pedidos</h2>
+
+    <div class="row g-4">
+        {% for order in orders %}
+            <div class="col-md-4 col-sm-6">
+                <!-- Adicionamos classes dinâmicas com base nas flags da view -->
+                <div class="card order-card shadow-sm border-0
+                    {% if order.is_new %} new-order {% endif %}
+                    {% if order.is_late %} late-order {% endif %}">
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title mb-0">Pedido #{{ order.id }}</h5>
+                            {% if order.status == 'PENDING' %}
+                                <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
+                            {% elif order.status == 'DELIVERED' %}
+                                <span class="badge bg-success">{{ order.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                            {% endif %}
+                        </div>
+
+                        <p class="card-text mb-1"><strong>Cliente:</strong> {{ order.customer_name }}</p>
+                        <p class="card-text mb-1"><strong>Total:</strong> R$ {{ order.total_price }}</p>
+                        <p class="card-text mb-1"><strong>Data:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+                        <p class="card-text mb-3">
+                            <strong>Entregador:</strong>
+                            {% if order.delivery and order.delivery.delivery_person %}
+                                {{ order.delivery.delivery_person.name }}
+                            {% else %}
+                                Nenhum
+                            {% endif %}
+                        </p>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'orders:detail' order.id %}" class="btn btn-info btn-sm">Detalhes</a>
+                            <a href="{% url 'orders:update_status' order.id %}" class="btn btn-primary btn-sm">Editar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="text-center">
+                <p>Nenhum pedido encontrado.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'orders:create' %}" class="btn btn-success btn-lg shadow">Criar Novo Pedido</a>
+    </div>
+</div>
+
+<style>
+    /* Base do card */
+    .order-card {
+        background: #ffffff;
+        border-radius: 12px;
+        transition: all 0.25s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .order-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+    /* Pedido novo - animação laranja pulsante */
+    .order-card.new-order {
+        animation: pulseNew 2s infinite;
+        border: 2px solid #ff6f00;
+    }
+
+    @keyframes pulseNew {
+        0% { box-shadow: 0 0 0 rgba(255,111,0,0.5); }
+        50% { box-shadow: 0 0 20px rgba(255,111,0,0.8); }
+        100% { box-shadow: 0 0 0 rgba(255,111,0,0.5); }
+    }
+
+    /* Pedido atrasado - animação vermelho pulsante */
+    .order-card.late-order {
+        animation: pulseLate 1.5s infinite;
+        border: 2px solid #ff3b30;
+    }
+
+    @keyframes pulseLate {
+        0% { box-shadow: 0 0 0 rgba(255,59,48,0.5); }
+        50% { box-shadow: 0 0 25px rgba(255,59,48,0.9); }
+        100% { box-shadow: 0 0 0 rgba(255,59,48,0.5); }
+    }
+
+    .order-card .card-title {
+        color: #ff6f00; /* toque laranja vibrante */
+        font-weight: 600;
+    }
+
+    /* Cores de borda por status */
+    .order-card .badge.bg-warning { border: 2px solid #ffcc00; }
+    .order-card .badge.bg-success { border: 2px solid #28a745; }
+    .order-card .badge.bg-secondary { border: 2px solid #6c757d; }
+
+    body { background-color: #f9fafc; }
+</style>
+
+{% endblock %}

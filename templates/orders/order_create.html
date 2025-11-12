@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Novo Pedido - Sistema de Fast Food{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="bi bi-cart-plus"></i> Novo Pedido</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" id="orderForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="customer" class="form-label">Cliente</label>
+                        <select class="form-select" id="customer" name="customer" required>
+                            <option value="">Selecione um cliente</option>
+                            {% for customer in customers %}
+                                <option value="{{ customer.id }}">{{ customer.name }} - {{ customer.phone }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <h5 class="mb-3">Itens do Pedido</h5>
+                    <div id="orderItems">
+                        <div class="row mb-2 order-item">
+                            <div class="col-md-8">
+                                <select class="form-select" name="items" required>
+                                    <option value="">Selecione um item</option>
+                                    {% for item in menu_items %}
+                                        <option value="{{ item.id }}" data-price="{{ item.price }}">
+                                            {{ item.name }} - R$ {{ item.price }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" class="form-control" name="quantities" min="1" value="1" placeholder="Qtd" required>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-danger btn-sm remove-item" disabled>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary mb-3" id="addItem">
+                        <i class="bi bi-plus"></i> Adicionar Item
+                    </button>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Criar Pedido
+                        </button>
+                        <a href="{% url 'orders:list' %}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('addItem').addEventListener('click', function() {
+    const container = document.getElementById('orderItems');
+    const newItem = container.querySelector('.order-item').cloneNode(true);
+    newItem.querySelector('select').value = '';
+    newItem.querySelector('input').value = '1';
+    newItem.querySelector('.remove-item').disabled = false;
+    container.appendChild(newItem);
+    updateRemoveButtons();
+});
+
+document.getElementById('orderItems').addEventListener('click', function(e) {
+    if (e.target.closest('.remove-item')) {
+        e.target.closest('.order-item').remove();
+        updateRemoveButtons();
+    }
+});
+
+function updateRemoveButtons() {
+    const items = document.querySelectorAll('.order-item');
+    items.forEach((item, index) => {
+        const btn = item.querySelector('.remove-item');
+        btn.disabled = items.length === 1;
+    });
+}
+</script>
+{% endblock %}

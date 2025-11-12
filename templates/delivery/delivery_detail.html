@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entrega #{{ delivery.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">🚚 Detalhes da Entrega #{{ delivery.id }}</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Pedido #{{ delivery.order.id }}</h5>
+            <p><strong>Cliente:</strong> {{ delivery.order.customer.name }}</p>
+            <p><strong>Endereço de entrega:</strong> {{ delivery.delivery_address }}</p>
+            <p><strong>Entregador:</strong>
+                {% if delivery.delivery_person %}
+                    {{ delivery.delivery_person.name }} ({{ delivery.delivery_person.vehicle }})
+                {% else %}
+                    <em>Não atribuído</em>
+                {% endif %}
+            </p>
+            <p><strong>Status atual:</strong>
+                <span class="badge 
+                    {% if delivery.status == 'PENDING' %}bg-secondary
+                    {% elif delivery.status == 'ASSIGNED' %}bg-warning text-dark
+                    {% elif delivery.status == 'IN_TRANSIT' %}bg-info
+                    {% elif delivery.status == 'DELIVERED' %}bg-success
+                    {% elif delivery.status == 'FAILED' %}bg-danger
+                    {% endif %}
+                ">
+                    {{ delivery.get_status_display }}
+                </span>
+            </p>
+            <p><strong>Tempo estimado:</strong> {{ delivery.estimated_time }} minutos</p>
+            {% if delivery.actual_delivery_time %}
+                <p><strong>Entregue em:</strong> {{ delivery.actual_delivery_time|date:"d/m/Y H:i" }}</p>
+            {% endif %}
+            {% if delivery.notes %}
+                <p><strong>Observações:</strong> {{ delivery.notes }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="mb-3">🔁 Atualizar Status</h4>
+    <form method="post" action="{% url 'delivery:update_status' delivery.id %}">
+        {% csrf_token %}
+        <div class="row g-3 align-items-center mb-3">
+            <div class="col-auto">
+                <label for="status" class="col-form-label">Novo status:</label>
+            </div>
+            <div class="col-auto">
+                <select name="status" id="status" class="form-select">
+                    {% for value, label in delivery.STATUS_CHOICES %}
+                        <option value="{{ value }}" {% if delivery.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </form>
+
+    <a href="{% url 'delivery:list' %}" class="btn btn-secondary mt-3">← Voltar à lista</a>
+</div>
+{% endblock %}

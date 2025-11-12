@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Início - Sistema ZaapFood{% endblock %}
+{% load static %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 ">
+        <div class="d-flex align-items-center">
+            <img src="{% static 'hamburguer.png'%}" alt="" height="80" width="80"> 
+        <h1 class="mt-2 p-3"> ZaapFood 
+
+        </h1>
+    </div>          
+        <p class="lead">Tecnologia a Serviço do Sabor</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body text-center">
+                <i class="bi bi-cart-check fs-1"></i>
+                <h3 class="mt-3">{{ total_pedidos }}</h3>
+                <p class="mb-0">Total de Pedidos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card success">
+            <div class="card-body text-center">
+                <i class="bi bi-people fs-1"></i>
+                <h3 class="mt-3">{{ total_clientes }}</h3>
+                <p class="mb-0">Clientes Cadastrados</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card warning">
+            <div class="card-body text-center">
+                <i class="bi bi-clock-history fs-1"></i>
+                <h3 class="mt-3">{{ pedidos_pendentes }}</h3>
+                <p class="mb-0">Pedidos Pendentes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card info">
+            <div class="card-body text-center">
+                <i class="bi bi-book fs-1"></i>
+                <h3 class="mt-3">{{ total_itens_menu }}</h3>
+                <p class="mb-0">Itens no Cardápio</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-cart-plus text-primary"></i> Novo Pedido
+                </h5>
+                <p class="card-text">Criar um novo pedido para um cliente</p>
+                <a href="{% url 'orders:create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Criar Pedido
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-person-plus text-success"></i> Novo Cliente
+                </h5>
+                <p class="card-text">Cadastrar um novo cliente no sistema</p>
+                <a href="{% url 'customers:create' %}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Cadastrar Cliente
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-graph-up text-info"></i> Relatórios
+                </h5>
+                <p class="card-text">Ver relatórios de vendas e desempenho</p>
+                <a href="{% url 'reports:sales' %}" class="btn btn-info">
+                    <i class="bi bi-bar-chart"></i> Ver Relatórios
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

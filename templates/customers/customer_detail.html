@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cliente: {{ customer.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Cabeçalho com ações -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>👤 {{ customer.name }}</h2>
+        <div>
+            <a href="{% url 'customers:edit' customer.id %}" class="btn btn-warning me-2">
+                ✏️ Editar
+            </a>
+            <form action="{% url 'customers:delete' customer.id %}" method="post" class="d-inline" 
+                  onsubmit="return confirm('Tem certeza que deseja excluir este cliente?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">🗑️ Excluir</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensagens Django -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Dados do cliente -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <p><strong>Telefone:</strong> {{ customer.phone }}</p>
+            <p><strong>E-mail:</strong> {{ customer.email|default:"—" }}</p>
+            <p><strong>Endereço:</strong> {{ customer.address }}</p>
+            <p><strong>Pontos de Fidelidade:</strong>
+                <span class="badge bg-success">{{ customer.loyalty_points }}</span>
+            </p>
+            {% if customer.referred_by %}
+                <p><strong>Indicado por:</strong> {{ customer.referred_by.name }}</p>
+            {% endif %}
+            <p><strong>Cliente desde:</strong> {{ customer.created_at|date:"d/m/Y H:i" }}</p>
+        </div>
+    </div>
+
+    <!-- Clientes indicados -->
+    {% if referrals %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">👥 Clientes Indicados</h5>
+                <ul class="list-group list-group-flush">
+                    {% for referral in referrals %}
+                        <li class="list-group-item">
+                            {{ referral.name }} – {{ referral.phone }}
+                            <span class="text-muted small">({{ referral.email|default:"sem e-mail" }})</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Histórico de pedidos -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">🧾 Histórico de Pedidos</h5>
+            {% if order_history %}
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Status</th>
+                                <th>Valor Total</th>
+                                <th>Data</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in order_history %}
+                                <tr>
+                                    <td>#{{ order.id }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if order.status == 'PENDING' %}bg-secondary
+                                            {% elif order.status == 'IN_PROGRESS' %}bg-warning text-dark
+                                            {% elif order.status == 'DELIVERED' %}bg-success
+                                            {% elif order.status == 'CANCELLED' %}bg-danger
+                                            {% else %}bg-info{% endif %}
+                                        ">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>R$ {{ order.total|floatformat:2 }}</td>
+                                    <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'orders:detail' order.id %}" class="btn btn-sm btn-outline-primary">
+                                            Ver Detalhes
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">Nenhum pedido encontrado para este cliente.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{% url 'customers:list' %}" class="btn btn-secondary mt-4">← Voltar à lista de clientes</a>
+</div>
+{% endblock %}

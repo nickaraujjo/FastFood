@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatório de Vendas - Sistema de Fast Food{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="bi bi-graph-up"></i> Relatório de Vendas</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Período</label>
+                        <select name="period" class="form-select">
+                            <option value="daily" {% if period == 'daily' %}selected{% endif %}>Hoje</option>
+                            <option value="weekly" {% if period == 'weekly' %}selected{% endif %}>Últimos 7 dias</option>
+                            <option value="monthly" {% if period == 'monthly' %}selected{% endif %}>Últimos 30 dias</option>
+                            <option value="all" {% if period == 'all' %}selected{% endif %}>Todo o período</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Entregador</label>
+                        <select name="delivery_person" class="form-select">
+                            <option value="">Todos</option>
+                            {% for person in delivery_persons %}
+                                <option value="{{ person.id }}" {% if selected_delivery_person == person.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ person.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card stat-card success">
+            <div class="card-body text-center">
+                <i class="bi bi-currency-dollar fs-1"></i>
+                <h3 class="mt-3">R$ {{ total_revenue|floatformat:2 }}</h3>
+                <p class="mb-0">Receita Total - {{ period_label }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card stat-card info">
+            <div class="card-body text-center">
+                <i class="bi bi-cart-check fs-1"></i>
+                <h3 class="mt-3">{{ total_orders }}</h3>
+                <p class="mb-0">Pedidos Entregues - {{ period_label }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-trophy"></i> Itens Mais Vendidos</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantidade</th>
+                                <th>Receita</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in best_selling %}
+                                <tr>
+                                    <td>{{ item.menu_item__name }}</td>
+                                    <td>{{ item.total_quantity }}</td>
+                                    <td>R$ {{ item.total_revenue|floatformat:2 }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">Nenhum dado disponível</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Vendas por Categoria</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cat in category_sales %}
+                                <tr>
+                                    <td>{{ cat.menu_item__category }}</td>
+                                    <td>R$ {{ cat.total|floatformat:2 }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="2" class="text-center">Nenhum dado disponível</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white text-center">
+                    <h4>Confirmar Exclusão</h4>
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-4">Tem certeza que deseja remover o entregador <strong>{{ person.name }}</strong>?</p>
+                    <form method="post" style="display:inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Remover</button>
+                    </form>
+                    <a href="{% url 'delivery:person_list' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

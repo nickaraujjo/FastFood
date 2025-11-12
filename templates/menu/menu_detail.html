@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Item{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+        {% endif %}
+        <div class="card-body">
+            <h3 class="card-title">{{ item.name }}</h3>
+            <p class="card-text">{{ item.description }}</p>
+            <p><strong>Categoria:</strong> {{ item.get_category_display }}</p>
+            <p><strong>Preço:</strong> R$ {{ item.price }}</p>
+            <p>
+                <strong>Status:</strong> 
+                {% if item.available %}
+                    Disponível
+                {% else %}
+                    Indisponível
+                {% endif %}
+            </p>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'menu:list' %}" class="btn btn-secondary">Voltar à lista</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
