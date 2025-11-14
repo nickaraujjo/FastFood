@@ -27,7 +27,7 @@
                             {% endif %}
                         </div>
 
-                        <p class="card-text mb-1"><strong>Cliente:</strong> {{ order.customer_name }}</p>
+                        <p class="card-text mb-1"><strong>Cliente:</strong> {{ order.customer.name }}</p>
                         <p class="card-text mb-1"><strong>Total:</strong> R$ {{ order.total_price }}</p>
                         <p class="card-text mb-1"><strong>Data:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
                         <p class="card-text mb-3">

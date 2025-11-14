@@ -8,6 +8,8 @@ urlpatterns = [
     path('<int:pk>/', views.delivery_detail, name='detail'),
     path('<int:pk>/atribuir/', views.delivery_assign, name='assign'),
     path('<int:pk>/status/', views.delivery_update_status, name='update_status'),
+    path('create/<int:order_id>/', views.delivery_create, name='create'),
+
 
     # CRUD de entregadores
     path('entregadores/', views.delivery_person_list, name='person_list'),

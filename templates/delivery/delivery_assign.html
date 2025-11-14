@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Atribuir Entregador - Sistema de Fast Food{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <h2 class="mb-4 text-center">Atribuir Entregador</h2>
+
+    <div class="card order-assign-card shadow-sm border-0 mx-auto" style="max-width: 600px;">
+        <div class="card-body">
+
+            <h4 class="card-title mb-3 text-center text-orange">
+                Pedido #{{ delivery.order.id }}
+            </h4>
+
+            <div class="mb-3">
+                <p><strong>Cliente:</strong> {{ delivery.order.customer.name }}</p>
+                <p><strong>Total:</strong> R$ {{ delivery.order.total_price }}</p>
+                <p><strong>Data:</strong> {{ delivery.order.created_at|date:"d/m/Y H:i" }}</p>
+
+                <p>
+                    <strong>Entregador Atual:</strong>
+                    {% if delivery.delivery_person %}
+                        <span class="text-success">{{ delivery.delivery_person.name }}</span>
+                    {% else %}
+                        <span class="text-danger">Nenhum</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <label for="deliveryman" class="form-label"><strong>Selecionar Entregador:</strong></label>
+                <select name="delivery_person" class="form-select mb-4">
+                    <option value="">-- Selecionar Entregador --</option>
+                    {% for person in available_persons %}
+                        <option value="{{ person.id }}">
+                            {{ person.name }} — {{ person.phone }} ({{ person.vehicle }})
+                        </option>
+                    {% endfor %}
+                </select>
+                
+
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'orders:list' %}" class="btn btn-secondary">Voltar</a>
+                    <button type="submit" class="btn btn-primary">Atribuir Entregador</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .order-assign-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 20px;
+        transition: 0.3s ease;
+    }
+
+    .order-assign-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .text-orange {
+        color: #ff6f00;
+        font-weight: 600;
+    }
+
+    body { background: #f9fafc; }
+
+    select.form-select {
+        border-radius: 10px;
+        padding: 10px;
+        border: 1px solid #ffa64d;
+    }
+
+    select.form-select:focus {
+        outline: none;
+        border-color: #ff6f00;
+        box-shadow: 0 0 6px rgba(255,111,0,0.4);
+    }
+</style>
+{% endblock %}

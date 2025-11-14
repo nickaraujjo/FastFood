@@ -40,10 +40,16 @@
                     <p><strong>Veículo:</strong> {{ order.delivery.delivery_person.vehicle }}</p>
                     <p><strong>Status:</strong> {{ order.delivery.delivery_person.get_status_display }}</p>
                 {% else %}
-                    <p>Nenhum entregador atribuído.</p>
+                    <p class="text-warning mb-2">Nenhum entregador atribuído.</p>
+                    <a href="{% url 'delivery:assign' order.delivery.id %}" class="btn btn-primary">
+                        Atribuir Entregador
+                    </a>
                 {% endif %}
             {% else %}
-                <p class="text-warning">Entrega ainda não criada para este pedido.</p>
+                <p class="text-warning mb-3">Entrega ainda não criada para este pedido.</p>
+                <a href="{% url 'delivery:create' order.id %}" class="btn btn-outline-primary">
+                    Criar Entrega para este Pedido
+                </a>
             {% endif %}
         </div>
     </div>
@@ -51,11 +57,6 @@
     <!-- Botões de ação -->
     <div class="d-flex gap-2">
         <a href="{% url 'orders:update_status' order.id %}" class="btn btn-success">Atualizar Status</a>
-
-        {% if order.delivery and not order.delivery.delivery_person %}
-            <a href="{% url 'delivery:assign' order.delivery.id %}" class="btn btn-primary">Atribuir Entregador</a>
-        {% endif %}
-
         <a href="{% url 'orders:list' %}" class="btn btn-secondary">Voltar</a>
     </div>
 </div>

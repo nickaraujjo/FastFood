@@ -128,3 +128,10 @@ def delivery_person_delete(request, pk):
         messages.success(request, 'Entregador removido com sucesso!')
         return redirect('delivery:person_list')
     return render(request, 'delivery/delivery_person_confirm_delete.html', {'person': person})
+    
+def delivery_create(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    delivery = Delivery.objects.create(order=order, status='PENDING')
+    messages.success(request, "Entrega criada com sucesso!")
+    return redirect('delivery:assign', pk=delivery.id)
+
